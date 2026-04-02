@@ -1,10 +1,21 @@
 use std::env;
+use crossterm::event;
 use urlencoding;
 
 use anyhow::{Context, Result};
-use dotenvy::dotenv;
 use reqwest;
 use serde::{Deserialize, Serialize};
+
+fn main() -> std::io::Result<()> {
+    ratatui::run(|mut terminal| {
+        loop {
+            terminal.draw(|frame| frame.render_widget("Hello World!", frame.area()))?;
+            if event::read()?.is_key_press() {
+                break Ok(());
+            }
+        }
+    })
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -147,16 +158,6 @@ struct ApiList<T> {
   page_size: Option<u8>,
   count: Option<u32>,
   total_count: Option<u32>,
-}
-
-
-#[tokio::main]
-async fn main() {
-  dotenv().ok();
-
-  let cards = fetch_cards("squirtle").await;
-
-  println!("{:?}", cards);
 }
 
 async fn fetch_cards(query: &str) -> Result<Vec<Card>> {
