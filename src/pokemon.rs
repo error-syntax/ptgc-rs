@@ -147,7 +147,7 @@ pub struct ApiList<T> {
   total_count: Option<u32>,
 }
 
-async fn fetch_cards(query: &str) -> Result<Vec<Card>> {
+pub async fn fetch_cards(query: &str) -> Result<Vec<Card>> {
   let api_base_url = env::var("POKEMON_TCG_API_BASE_URL").expect("Pokémon API Base URL not set");
 
   let url = format!("{}/cards?q=name:\"{}*\"", api_base_url, urlencoding::encode(query));
