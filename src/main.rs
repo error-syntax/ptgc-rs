@@ -1,9 +1,11 @@
 use anyhow::Result;
 use inquire::{InquireError, Select, Text};
 
+mod models;
 mod pokemon;
 
-fn main() {
+#[tokio::main]
+async fn main() {
   dotenvy::dotenv().ok();
 
   loop {
@@ -20,17 +22,41 @@ fn main() {
           eprintln!("Invalid entry...")
         }
 
-        println!("Searching for {}...", query.unwrap());
+        let query_string = query.unwrap();
+
+        println!("Searching for {}...", &query_string);
+
+        match pokemon::card::where_name(&query_string).await {
+          Ok(cards) => {
+            if cards.is_empty() {
+              println!("No cards found.");
+            } else {
+              for card in &cards {
+                println!("{} - {}", card.set.name, card.name);
+                println!("Images: {:?}", card.images);
+                println!("--------------------------------");
+              }
+            }
+          },
+          Err(e) => eprintln!("Error fetching cards: {}", e)
+        }
+
         break;
       },
       Ok("sets") => {
-        let query = Text::new("What Set are you looking for?").prompt();
-
-        if query.is_err() {
-          eprintln!("Invalid entry...")
+        match pokemon::set::all().await {
+          Ok(sets) => {
+            if sets.is_empty() {
+              println!("No sets found.");
+            } else {
+              for set in &sets {
+                println!("{:?}", set);
+                println!("=========================================");
+              }
+            }
+          },
+          Err(e) => eprintln!("Error fetching sets: {}", e),
         }
-
-        println!("Searching for {}...", query.unwrap());
         break;
       }
       Ok(choice) => println!("Unknown choice: {}", choice),

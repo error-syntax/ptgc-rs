@@ -1,14 +1,10 @@
-use std::env;
-use urlencoding;
-use anyhow::{Context, Result};
-use reqwest;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Card {
-  id: String,
-  name: String,
+  pub id: String,
+  pub name: String,
   supertype: String,
   subtypes: Option<Vec<String>>,
   level: Option<String>,
@@ -23,16 +19,16 @@ pub struct Card {
   resistances: Option<Vec<Resistance>>,
   retreat_cost: Option<Vec<String>>,
   converted_retreat_cost: Option<u8>,
-  set: SetStub,
+  pub set: SetStub,
   number: String,
   artist: Option<String>,
   rarity: Option<String>,
   flavor_text: Option<String>,
   national_pokedex_numbers: Option<Vec<u16>>,
   legalities: Legalities,
-  images: CardImages,
-  tcgplayer: Option<TcgPlayer>,
-  cardmarket: Option<CardMarket>,
+  pub images: CardImages,
+  pub tcgplayer: Option<TcgPlayer>,
+  pub cardmarket: Option<CardMarket>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -74,7 +70,7 @@ pub struct Resistance {
 #[serde(rename_all = "camelCase")]
 pub struct SetStub {
   id: String,
-  name: String,
+  pub name: String,
   series: String,
   printed_total: u16,
   total: u16,
@@ -126,11 +122,11 @@ pub struct CardMarket {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Set {
-  id: String,
-  name: String,
-  series: String,
+  pub id: String,
+  pub name: String,
+  pub series: String,
   printed_total: u16,
-  total: u16,
+  pub total: u16,
   legalities: Legalities,
   ptcgo_code: Option<String>,
   release_date: String,
@@ -140,26 +136,9 @@ pub struct Set {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ApiList<T> {
-  data: Vec<T>,
-  page: Option<u8>,
-  page_size: Option<u8>,
-  count: Option<u32>,
-  total_count: Option<u32>,
-}
-
-pub async fn fetch_cards(query: &str) -> Result<Vec<Card>> {
-  let api_base_url = env::var("POKEMON_TCG_API_BASE_URL").expect("Pokémon API Base URL not set");
-
-  let url = format!("{}/cards?q=name:\"{}*\"", api_base_url, urlencoding::encode(query));
-  let resp = reqwest::get(&url)
-    .await
-    .context("network error")?
-    .json::<ApiList<Card>>()
-    .await
-    .context("deserialize error");
-
-  match resp {
-      Ok(cards) => { return Ok(cards.data) },
-      Err(err) => { panic!("{:?}", err)},
-  };
+  pub data: Vec<T>,
+  pub page: Option<u8>,
+  pub page_size: Option<u8>,
+  pub ount: Option<u32>,
+  pub otal_count: Option<u32>,
 }
