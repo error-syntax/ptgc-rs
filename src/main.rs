@@ -1,5 +1,9 @@
+use std::collections::HashMap;
+
 use anyhow::Result;
 use inquire::{InquireError, Select, Text};
+
+use crate::models::Card;
 
 mod models;
 mod pokemon;
@@ -49,9 +53,49 @@ async fn main() {
             if sets.is_empty() {
               println!("No sets found.");
             } else {
+              let mut sets_map: HashMap<String, String> = HashMap::new();
+
               for set in &sets {
-                println!("{:?}", set);
-                println!("=========================================");
+                sets_map
+                  .entry(String::from(&set.id))
+                  .or_insert(String::from(&set.name));
+              }
+
+              let selected_card_set = Select::new(
+                "Which Set are you interested in?",
+                sets_map.clone().into_values().collect()
+              )
+              .prompt();
+
+              match selected_card_set {
+                Ok(choice) => {
+                  let set = sets_map.iter().find(|el| {
+                    el.1.to_owned() == choice
+                  });
+
+                  match set {
+                    Some(found) => {
+                      println!("Fetching cards for Set: {}", found.1);
+                      let set_cards = pokemon::card::where_set_id(found.0.to_owned()).await;
+
+                      match set_cards {
+                         Ok(cards) => {
+                           let mut card_options: Vec<Card> = vec![];
+
+                           for card in cards {
+                             card_options.push(card);
+                           }
+
+                           println!("Here are all the cards: {:?}",card_options);
+                         },
+                        Err(_) => eprintln!("Something happened listing the Cards."),
+                      }
+                    },
+                    None => eprintln!("Failed to fetch cards in Set"),
+                  }
+
+                },
+                Err(_) => eprintln!("Failed to make a selection"),
               }
             }
           },
