@@ -146,7 +146,7 @@ pub struct CardMarket {
 
 impl ShowPrices for TcgPlayer {
   fn show_prices(&self) {
-    println!("Prices:");
+    println!("Prices: (updated: {})",self.updated_at.as_deref().unwrap_or("N/A"));
     if let Some(prices) = &self.prices {
       if let Some(variants) = prices.as_object() {
         for (variant, price_data) in variants {
@@ -159,13 +159,12 @@ impl ShowPrices for TcgPlayer {
         }
       }
     }
-    println!("Updated: {}", self.updated_at.as_deref().unwrap_or("N/A"));
   }
 }
 
 impl ShowPrices for CardMarket {
   fn show_prices(&self) {
-    println!("Prices:");
+    println!("Prices: (updated: {})",self.updated_at.as_deref().unwrap_or("N/A"));
     if let Some(prices) = &self.prices {
       if let Some(fields) = prices.as_object() {
         for (key, val) in fields {
@@ -173,7 +172,6 @@ impl ShowPrices for CardMarket {
         }
       }
     }
-    println!("Updated: {}", self.updated_at.as_deref().unwrap_or("N/A"));
   }
 }
 

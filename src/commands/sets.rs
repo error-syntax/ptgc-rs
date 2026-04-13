@@ -1,7 +1,7 @@
 use inquire::Select;
 
 use crate::models::{Card, ShowPrices};
-use crate::{images, pokemon};
+use crate::pokemon;
 
 pub async fn search() {
   let sets = match pokemon::set::all().await {
