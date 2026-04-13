@@ -1,6 +1,6 @@
 use inquire::Select;
 
-use crate::models::Card;
+use crate::models::{Card, ShowPrices};
 use crate::{images, pokemon};
 
 pub async fn search() {
@@ -56,16 +56,12 @@ async fn show_card_details(card: &Card) {
   println!("Card: {}", card.name);
 
   if let Some(tcg) = &card.tcgplayer {
-    println!("\nTCGPlayer (updated: {})", tcg.updated_at.as_deref().unwrap_or("N/A"));
-    if let Some(prices) = &tcg.prices {
-      println!("  Prices: {}", prices);
-    }
+    println!("\nTCGPlayer");
+    tcg.show_prices();
   }
 
   if let Some(cm) = &card.cardmarket {
-    println!("\nCardMarket (updated: {})", cm.updated_at.as_deref().unwrap_or("N/A"));
-    if let Some(prices) = &cm.prices {
-      println!("  Prices: {}", prices);
-    }
+    println!("\nCardMarket");
+    cm.show_prices();
   }
 }

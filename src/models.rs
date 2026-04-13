@@ -1,5 +1,30 @@
 use serde::{Deserialize, Serialize};
 
+pub trait ShowPrices {
+  fn show_prices(&self);
+}
+
+fn to_title_case(s: &str) -> String {
+  let chars: Vec<char> = s.chars().collect();
+  let mut result = String::new();
+
+  for (i, &ch) in chars.iter().enumerate() {
+    if i == 0 {
+      result.extend(ch.to_uppercase());
+    } else {
+      let prev = chars[i - 1];
+      if (ch.is_uppercase() && prev.is_lowercase())
+        || (ch.is_ascii_digit() && !prev.is_ascii_digit())
+        || (ch.is_alphabetic() && prev.is_ascii_digit())
+      {
+        result.push(' ');
+      }
+      result.push(ch);
+    }
+  }
+  result
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Card {
@@ -117,6 +142,39 @@ pub struct CardMarket {
   url: String,
   pub updated_at: Option<String>,
   pub prices: Option<serde_json::Value>,
+}
+
+impl ShowPrices for TcgPlayer {
+  fn show_prices(&self) {
+    println!("Prices:");
+    if let Some(prices) = &self.prices {
+      if let Some(variants) = prices.as_object() {
+        for (variant, price_data) in variants {
+          println!("  {}:", to_title_case(variant));
+          if let Some(fields) = price_data.as_object() {
+            for (key, val) in fields {
+              println!("    {}: {}", to_title_case(key), val);
+            }
+          }
+        }
+      }
+    }
+    println!("Updated: {}", self.updated_at.as_deref().unwrap_or("N/A"));
+  }
+}
+
+impl ShowPrices for CardMarket {
+  fn show_prices(&self) {
+    println!("Prices:");
+    if let Some(prices) = &self.prices {
+      if let Some(fields) = prices.as_object() {
+        for (key, val) in fields {
+          println!("  {}: {}", to_title_case(key), val);
+        }
+      }
+    }
+    println!("Updated: {}", self.updated_at.as_deref().unwrap_or("N/A"));
+  }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
