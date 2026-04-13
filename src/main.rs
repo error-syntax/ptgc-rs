@@ -1,7 +1,6 @@
 use inquire::{InquireError, Select};
 
 mod commands;
-mod images;
 mod models;
 mod pokemon;
 
