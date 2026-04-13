@@ -5,9 +5,11 @@ use reqwest;
 use crate::models::{ApiList, Set};
 
 pub async fn all() -> Result<Vec<Set>> {
+  println!("Fetching all Sets...");
+
   let api_base_url = var("POKEMON_TCG_API_BASE_URL").expect("Pokémon API Base URL not set");
 
-  let url = format!("{}/sets", api_base_url);
+  let url = format!("{}/sets?orderBy=\"-releaseDate\"", api_base_url);
   let resp = reqwest::get(&url)
     .await
     .context("Network Error")?

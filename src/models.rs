@@ -77,7 +77,7 @@ pub struct SetStub {
   legalities: Legalities,
   ptcgo_code: Option<String>,
   release_date: String,
-  updated_at: String,
+  updated_at: Option<String>,
   images: SetImages,
 }
 
@@ -91,8 +91,8 @@ pub struct SetImages {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CardImages {
-  small: String,
-  large: String,
+  pub small: String,
+  pub large: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -107,16 +107,16 @@ pub struct Legalities {
 #[serde(rename_all = "camelCase")]
 pub struct TcgPlayer {
   url: String,
-  updated_at: String,
-  prices: Option<serde_json::Value>,
+  pub updated_at: Option<String>,
+  pub prices: Option<serde_json::Value>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CardMarket {
   url: String,
-  updated_at: String,
-  prices: Option<serde_json::Value>,
+  pub updated_at: Option<String>,
+  pub prices: Option<serde_json::Value>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -130,7 +130,7 @@ pub struct Set {
   legalities: Legalities,
   ptcgo_code: Option<String>,
   release_date: String,
-  updated_at: String,
+  updated_at: Option<String>,
   images: SetImages,
 }
 
@@ -140,5 +140,5 @@ pub struct ApiList<T> {
   pub page: Option<u8>,
   pub page_size: Option<u8>,
   pub ount: Option<u32>,
-  pub otal_count: Option<u32>,
+  pub total_count: Option<u32>,
 }

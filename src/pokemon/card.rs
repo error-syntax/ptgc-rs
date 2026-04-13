@@ -24,7 +24,7 @@ pub async fn where_name(query: &str) -> Result<Vec<Card>> {
 pub async fn where_set_id(set_id: String) -> Result<Vec<Card>> {
   let api_base_url = var("POKEMON_TCG_API_BASE_URL").expect("Pokémon API Base URL not set");
 
-  let url = format!("{}/cards?q=set.id:\"{}\"", api_base_url, urlencoding::encode(&set_id));
+  let url = format!("{}/cards?q=set.id:\"{}\"&orderBy=number", api_base_url, urlencoding::encode(&set_id));
   let resp = reqwest::get(&url)
     .await
     .context("Network Error")?
